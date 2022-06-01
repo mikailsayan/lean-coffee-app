@@ -7,18 +7,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useSWRConfig } from "swr";
 
 export default function Card(props) {
   const [isEditMode, setIsEditMode] = useState(false);
-
   function enableEditMode() {
     setIsEditMode(true);
   }
-
   function disableEditMode() {
     setIsEditMode(false);
   }
-
   return (
     <MuiCard>
       {isEditMode ? (
@@ -29,8 +27,8 @@ export default function Card(props) {
     </MuiCard>
   );
 }
-
 function CardModeShow({ id, content, name, onEnableEditMode }) {
+  const { mutate } = useSWRConfig();
   return (
     <>
       <CardContent>
@@ -43,10 +41,11 @@ function CardModeShow({ id, content, name, onEnableEditMode }) {
         <Button
           size="small"
           onClick={async () => {
-            const response = await fetch("/api/card/" +id, {
-              method: "DELETE"
-            })
+            const response = await fetch("/api/card/" + id, {
+              method: "DELETE",
+            });
             console.log(await response.json());
+            mutate("/api/cards");
           }}
         >
           Delete
@@ -58,27 +57,26 @@ function CardModeShow({ id, content, name, onEnableEditMode }) {
     </>
   );
 }
-
 function CardModeEdit({ id, content, name, onDisableEditMode }) {
   const [nameValue, setNameValue] = useState(name);
   const [contentValue, setContentValue] = useState(content);
+  const { mutate } = useSWRConfig();
 
   async function onFormSubmit(event) {
     event.preventDefault();
-    console.log(nameValue, contentValue);
-    onDisableEditMode();
-
-    const response = await fetch("/api/card/" +id, {
+    console.log(id, nameValue, contentValue);
+    const response = await fetch("/api/card/" + id, {
       method: "PUT",
       body: JSON.stringify({
         content: contentValue,
-        name: nameValue
-      })
-    })
+        name: nameValue,
+      }),
+    });
     console.log(await response.json());
-    
-  }
 
+    mutate("/api/cards");
+    onDisableEditMode();
+  }
   return (
     <form onSubmit={onFormSubmit}>
       <CardContent>
@@ -105,13 +103,7 @@ function CardModeEdit({ id, content, name, onDisableEditMode }) {
         />
       </CardContent>
       <CardActions>
-        <Button
-          type="submit"
-          size="small"
-          onClick={() => {
-            console.log("Delete card", id, content, name);
-          }}
-        >
+        <Button type="submit" size="small">
           Save
         </Button>
       </CardActions>

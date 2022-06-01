@@ -7,7 +7,6 @@ export default function handler(req, res) {
         id: 1,
         content: "Testy Test",
         name: "Testname"
-
     })
 
     res.status(200).json(cards)

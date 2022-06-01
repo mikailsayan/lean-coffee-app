@@ -1,13 +1,11 @@
-import { Typography } from "@mui/material"
-import CardCreateForm from "../src/components/CardCreateForm";
+import { Typography } from "@mui/material";
+import CardCreateForm from "../src/Component/CardCreateForm";
 
 export default function Create() {
-
-    return ( 
-      <>
-        <Typography variant="h1">Create</Typography>
-        <CardCreateForm />
-      </>
-    )
-  }
-  
+  return (
+    <>
+      <Typography variant="h1">Create</Typography>
+      <CardCreateForm />
+    </>
+  );
+}

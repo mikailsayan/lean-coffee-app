@@ -1,28 +1,31 @@
 import { Typography } from "@mui/material";
 import { SWRConfig } from "swr";
-import {getCards} from "../services/get-cards";
 import CardGrid from "../src/components/CardGrid";
-import { swrFetcher } from "../src/components/lib/swr-fetcher";
+import { getCards } from "../src/services/get-cards";
+import swrFetcher from "../src/components/lib/swr-fetcher";
 
-export function getStaticProps() {
-const cards = getCards();
+export async function getStaticProps() {
+  const cards = await getCards();
 
   return {
     props: {
+      //cards,
       fallback: {
-        "/api/cards": cards
-      }
-    }
-  }
+        // folgende Daten (aus lokaler JSON Datein) sollen als Fallback genutz werden, wenn über Server folgende Route angefragt wird
+        // (wenn über Browser Anfrage stattfindet, dann sollen Daten von der API geladen werden)
+        "/api/cards": cards,
+      },
+    },
+  };
 }
 
-export default function Cards({fallback}) {
-  
-    return ( 
-      <SWRConfig value={{fetcher: swrFetcher, fallback}}>
-        <Typography variant="h1">Cards</Typography>
-        <CardGrid></CardGrid>
-      </SWRConfig>
-    )
-  }
-  
+export default function Cards({ /*cards*/ fallback }) {
+  return (
+    <SWRConfig value={{ fetcher: swrFetcher, fallback: fallback }}>
+      <Typography variant="h1">Cards</Typography>
+      <CardGrid /*cards={cards}*/ />
+    </SWRConfig>
+  );
+}
+
+//Vor swrFetch
